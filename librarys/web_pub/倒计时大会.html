@@ -1,0 +1,101 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+<meta charset="utf-8"/>
+<title>大会倒计时</title>
+<meta name="description" content="大会倒计时" /> 
+<meta name="keywords" content="大会倒计时" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style type="text/css">
+ul {padding:20px;overflow:hidden;background:gray;height:30px;line-height:30px;list-style:none;}
+ul li {float:left;height:30px;line-height:30px;margin:0 5px;_display:inline;}
+</style>
+</head>
+
+<body>
+<ul id="k_daojishi"></ul>
+<script type="text/javascript">
+function countDown(objId,pos){
+	if(!objId)return null;
+	var obj = document.getElementById(objId);
+	var setTime = (typeof pos.setTime == 'undefined')?'':pos.setTime;
+	var over = (typeof pos.over == 'undefined')?'':pos.over;
+	var dateValue;
+	var times = null;
+	var will = null;
+	function toTime(){
+		var time = {};
+		var now = new Date();
+		var nowTime = now.getTime();
+		var iDayTime = (times - nowTime)/1000/60/60/24;
+		var day = parseInt(iDayTime);
+		var iHourTime = (iDayTime - day)*24;
+		var hour = parseInt(iHourTime);
+		var iMinutesTime = (iHourTime - hour)*60;
+		var minutes = parseInt(iMinutesTime);
+		var iSecondsTime = (iMinutesTime-minutes)*60;
+		var seconds =  parseInt(Math.ceil(iSecondsTime));
+		var time = {d:day,h:hour,m:minutes,s:seconds}
+		return time;
+	}
+	function toDouble(num){
+		var number = num;
+		if(number<10&&number>=0){
+			number = '0'+number;
+		}else if(number>=10){
+			number = ''+number;
+		}else if(number<0 && number>-10){
+			number = Math.abs(number);
+			number = '-0'+number;
+		}
+		return number;
+	}
+	function timeFn(){
+		dateValue = setTime.split(',');
+		will = new Date(dateValue[0],dateValue[1]-1,dateValue[2],dateValue[3],dateValue[4],dateValue[5]);
+		times = will.getTime();
+		setTimeout(function(){
+			sDateStr = '';
+			oSyTime = toTime();
+			for(var key in oSyTime){
+				oSyTime[key] = toDouble(oSyTime[key]);
+				sDateStr+=oSyTime[key];
+			}
+			obj.innerHTML = '<li>'+oSyTime.d+'天</li><li>'+oSyTime.h+'时</li><li>'+oSyTime.m+'分</li><li class="k_sp">'+oSyTime.s+'秒</li>';
+			if(oSyTime.s>0){
+				setTimeout(arguments.callee,1000);
+			}else {
+				stFn();
+				obj.innerHTML = '<li>00天</li><li>00时</li><li>00分</li><li class="k_sp">00秒</li>';
+			}
+		},1000);
+		function stFn(){
+			setTimeout(function(){
+				var oDate = new Date();
+				var iYear = oDate.getFullYear();
+				var iMonth = oDate.getMonth()+1;//月份是从0开始计算，所以+1
+				var iDay = oDate.getDate();
+				var iWeek = oDate.getDay();//星期 从0开始 0表示 星期日
+				var iHour = oDate.getHours();
+				var iMinutes = oDate.getMinutes();
+				var iSeconds = oDate.getSeconds();
+				var stopTimers = toDouble(iYear)+','+toDouble(iMonth)+','+toDouble(iDay)+','+toDouble(iHour)+','+toDouble(iMinutes)+','+toDouble(iSeconds)+"";
+				if(stopTimers>over){
+					obj.parentNode.innerHTML = '<strong style="font-size:22px">大会已经结束</strong>'
+				}else {
+					setTimeout(arguments.callee,1000);
+				}
+			},1000);
+		}
+	}
+	timeFn();
+};
+countDown('k_daojishi',{setTime:'2013,09,25,14,28,00',over:'2013,09,25,14,29,00'});
+/**
+	参数一：ul id
+	参数二：设置大会开始时间
+	参数三：设置大会结束时间
+*/
+</script>
+</body>
+</html>

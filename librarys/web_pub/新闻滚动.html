@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>刘利庆</title>
+<meta name="description" content="刘利庆" /> 
+<meta name="keywords" content="刘利庆" />
+<link rel="stylesheet" href="css/index.css"/>
+<style>
+* {margin:0;padding:0;font-weight:normal;font-size:12px;}
+.div {width:980px;height:30px;border:1px solid #ccc;margin:50px auto;}
+.k_prev {float:right;height:30px;line-height:30px;font-size:12px;margin-right:5px;_display:inline;text-decoration:none;color:#ccc;outline:none}
+.div b {float:left;height:30px;line-height:30px;padding-left:10px;font-weight:normal;color:#333;}
+.k_news {margin-left:70px;height:30px;overflow:hidden;}
+.k_news div {height:30px;line-height:30px;overflow:hidden;}
+</style>
+</head>
+<body>
+<div class="div">
+	<a href="javascript:;" class="k_prev" id="k_prev">下一条</a>
+	<b>新闻：</b>
+	<div class="k_news" id="k_ul">
+		<div><a href="#">第1季选手“惨”遭爆料</a><i>&nbsp;</i><span>05-01</span></div>
+		<div><a href="#">第2季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第3季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第4季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第5季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第6季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第7季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第8季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第9季选手“惨”遭爆料</a><span>05-01</span></div>
+		<div><a href="#">第10季选手“惨”遭爆料</a><span>05-01</span></div>
+	</div>
+</div>
+<script>
+var _Q = {
+	css : function (obj,attr,value){
+		if(!obj){return null;}
+		if(arguments.length === 2){	
+			if(obj.currentStyle){
+				return obj.currentStyle[attr];
+			}else{
+				return getComputedStyle(obj,false)[attr];
+			}
+		}else if(arguments.length === 3){
+			obj.style[attr] = value;
+		}
+	},
+	startMove : function (obj,oTarget,fn){
+		if(!obj){return null;}
+		clearInterval(obj.timer);obj.timer = null;
+		obj.timer = setInterval(function(){
+			var iCur = 0;
+			var attr = '';
+			var bStop = true;
+			for(attr in oTarget){
+				if(attr == 'opacity'){
+					//iCur = Math.round(_Q.css(obj,'opacity')*100);
+					iCur = parseInt(parseFloat(_Q.css(obj,'opacity')).toFixed(2)*100);
+				}else {
+					iCur = parseInt(_Q.css(obj,attr))
+				}
+				if(isNaN(iCur)){iCur=0;}
+				var iSpeed = (oTarget[attr]-iCur)/9;
+				iSpeed=iSpeed>0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+				iCur+=iSpeed;
+				if(oTarget[attr]!=iCur){bStop=false;}
+				if(attr == 'opacity'){
+					obj.style.filter='alpha(opacity:'+iCur+')';
+					obj.style.opacity=iCur/100;
+				}else {
+					obj.style[attr]=iCur+'px';
+				}
+			}
+			if(bStop){
+				clearInterval(obj.timer);
+				obj.timer=null;
+				if(fn){fn.call(obj);}
+			}
+		},30)
+	}
+}
+function onScrollFn(){
+	var oUl = document.getElementById('k_ul');
+	var oPrev = document.getElementById('k_prev');
+	var aLi = oUl.getElementsByTagName('div');
+	var t = null;
+	oPrev.onmouseover = oUl.onmouseover = function(){
+		if(t){
+			clearInterval(t);
+			t = null;
+		}
+	}
+	oPrev.onmouseout = oUl.onmouseout = function(){
+		if(!t){
+			t = setInterval(scro,3000)
+		}
+	}
+	t = setInterval(scro,3000)
+	function scro(){
+		var lastObj = last(oUl);
+		var firstObj = first(oUl);
+		lastObj.style.height = '0';
+		_Q.startMove(lastObj,{height:30});
+		oUl.insertBefore(lastObj,firstObj);
+	}
+	oPrev.onclick = scro;
+}
+function last(oParent){
+	if(!oParent)return null;
+	return oParent.lastElementChild || oParent.lastChild;
+}
+function first(oParent){
+	if(!oParent)return null;
+	return oParent.firstElementChild || oParent.firstChild;
+}
+onScrollFn();
+</script>
+</body>
+</html>

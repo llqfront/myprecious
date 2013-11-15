@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>无缝隙滚动无循环上下</title>
+<meta name="description" content="无缝隙滚动无循环上下" /> 
+<meta name="keywords" content="无缝隙滚动无循环上下" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+*{padding: 0;margin: 0;}
+ul,ol {list-style: none;}
+img {border: 0;}
+.roll {width: 110px; height: 360px;border:1px solid red; margin: 50px auto 0; }
+.btn_left{display: block; width: 68px; height: 68px; background: url(../images/btn.jpg) no-repeat -70px -69px;}
+.btn_right {display: block; width: 68px; height: 68px; background: url(../images/btn.jpg) no-repeat 1px -69px; }
+.roll .wrap { width: 110px; height: 216px; margin: 0 auto; position: relative; overflow: hidden; }
+.roll ul { position: absolute; top: 0; left: 0; }
+.roll li { float: left; width: 110px;height: 108px; text-align: center; }
+.roll li img {width: 110px;height: 108px;}
+.roll li a:hover { position: relative; top: 0px; }
+</style>
+</head>
+<body>
+<div class="roll" id="roll">
+	<a href="javascript:void(0);" class="btn_left" id="btn_left"></a>
+	<div class="wrap">
+		<ul id="ulis">
+			<li><a href="#"><img src="../images/1.jpg" /></a></li>
+			<li><a href="#"><img src="../images/2.jpg" /></a></li>
+			<li><a href="#"><img src="../images/3.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+			<li><a href="#"><img src="../images/4.jpg" /></a></li>
+		</ul>
+	</div>
+	<a href="javascript:void(0);" class="btn_right" id="btn_right"></a>
+</div>
+<script>
+function scroll(ul,left,right){
+	var uls=document.getElementById(ul);
+	var adiv=uls.parentNode;
+	var lis=uls.getElementsByTagName('li');
+	var next=document.getElementById(left);
+	var prve=document.getElementById(right);
+	var nowleft=0;
+	var left=0;
+	var timer = null;
+	uls.innerHTML+=uls.innerHTML;
+	uls.style.height=lis[0].offsetHeight*lis.length+"px";
+	prve.onclick=function(){
+		nowleft-=lis[0].offsetHeight;
+		doMove(uls,nowleft);
+	};
+	next.onclick=function(){
+		nowleft+=lis[0].offsetHeight;
+		doMove(uls,nowleft);
+	};
+	adiv.onmouseover = function(){
+		clearInterval(timer);
+	}
+	adiv.onmouseout = function(){
+		timer = setInterval(next.onclick,3000);
+	}
+	function doMove(obj,target){
+		if(obj.timer){clearInterval(obj.timer);}
+		obj.timer=setInterval(function (){
+			goMove(obj,target);
+		}, 30);
+	}
+	function goMove(obj,target){
+		var iSpeed=(target-left)/5;
+		iSpeed=iSpeed>0?Math.ceil(iSpeed):Math.floor(iSpeed);
+		left+=iSpeed;
+		obj.style.top=thisleft(left)+'px';
+	};
+	function thisleft(left){
+		return left-(uls.offsetHeight/2)*Math.ceil(left/(uls.offsetHeight/2));
+	};
+	var timer = setInterval(prve.onclick,3000)
+};
+scroll('ulis','btn_left','btn_right');
+</script>
+</body>
+</html>

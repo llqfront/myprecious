@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>竖着滚动条</title>
+<meta name="description" content="竖着滚动条"/>
+<meta name="keywords" content="竖着滚动条"/>
+<link rel="stylesheet" href="../css/index.css">
+<style>
+.k_scroll_father {width:600px;height:600px;border:1px solid #ccc;margin:10px auto;overflow:hidden;}
+.k_s_con {line-height:28px;padding:10px;}
+.k_bar_parent {width:10px;background:#ccc;position:absolute;right:0;top:0;display:none;z-index:10;}
+.k_bar {width:10px;background:blue;position:absolute;right:0;top:0;}
+</style>
+</head>
+<body>
+<div class="k_scroll_father pr" id="k_parent">
+	<div class="k_s_con pa" id="k_con">
+		1鲜花经验值：当前为 1， 完成今日上限还需93朵鲜花<br/>
+		2礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		3鲜花经验值：当前为 1， 完成今日上限还需93朵鲜花<br/>
+		4礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		5鲜花经验值：当前为 1， 完成今日上限还需93朵鲜花<br/>
+		6礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		37礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		38礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		39礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		40礼物经验值：当前为 0， 完成今日上限还需5940呱币<br/>
+		41礼物经验值：当前为 0， 完成今日上限还需5940呱币
+	</div>
+</div>
+<input type="button" value="点击" id="k_btn"/>
+<script src="../js/Q_web.js"></script>
+<script>
+function ScrollBar(oParent,oContent){
+	this.oConFather = _Q.Q(oParent)[0];
+	this.oCon = _Q.Q(oContent)[0];
+	this.oBar = document.createElement('div');
+	this.oOpt = document.createElement('div');
+	this.oA = document.getElementById('k_btn');
+	this.oBar.className='k_bar_parent';
+	this.oOpt.className='k_bar';
+	this.oBar.appendChild(this.oOpt);
+	this.oConFather.appendChild(this.oBar);
+	this.scale = 0;
+	this.disY = 0;
+	this.it = 0;
+	this.bDown = true;
+	this.timer = null;
+	var _this = this;
+	clearInterval(this.timer)
+	_Q.addEvent(this.oConFather,'mousewheel',function(ev){
+		_this.mouseFn(ev);
+	});
+	_Q.addEvent(this.oConFather,'DOMMouseScroll',function(ev){
+		_this.mouseFn(ev);
+	});
+	_Q.addEvent(this.oOpt,'mousedown',function(ev){
+		_this.downFn(ev);
+		return false;
+	});
+	_Q.addEvent(this.oA,'click',function(){
+		_this.create();
+	});
+	this.timer = setInterval(function(){
+		_this.optFn();
+	},200);
+}
+ScrollBar.prototype.mouseFn = function(ev){
+	var oEvent = ev || event;
+	var _this = this;
+	this.bDown = oEvent.wheelDelta ? oEvent.wheelDelta<0 : oEvent.detail>0;
+	if(this.bDown){
+		_this.setTop(this.oOpt.offsetTop+10);
+	}else {
+		_this.setTop(this.oOpt.offsetTop-10);
+	}
+	if(oEvent.preventDefault){
+		oEvent.preventDefault();
+	}
+	return false;
+}
+ScrollBar.prototype.downFn = function(ev){
+	var oEvent = ev || event;
+	var _this = this;
+	this.disY = oEvent.clientY-this.oOpt.offsetTop;
+	if(this.oOpt.setCapture){
+		this.oOpt.onmousemove = function(ev){
+			_this.fnMove(ev);
+		};
+		this.oOpt.onmouseup = function(){
+			_this.fnUp(this);
+		};
+		this.oOpt.setCapture();
+	}else {
+		document.onmousemove = function(ev){
+			_this.fnMove(ev);
+		};
+		document.onmouseup = function(){
+			_this.fnUp(this);
+		};
+	}
+	return false;
+}
+ScrollBar.prototype.fnMove = function(ev){
+	var oEvent = ev || event;
+	this.it = oEvent.clientY - this.disY;
+	var _this = this;
+	_this.setTop(this.it);
+}
+ScrollBar.prototype.fnUp = function(o){
+	o.onmousemove = o.onmouseup = null;
+	if(o.releaseCapture){
+		o.releaseCapture();
+	}
+}
+ScrollBar.prototype.setTop = function(iTop){
+	var _this = this;
+	if(iTop<0){
+		iTop = 0;
+	}else if(iTop > this.oBar.offsetHeight-this.oOpt.offsetHeight){
+		iTop = this.oBar.offsetHeight-this.oOpt.offsetHeight;
+	}
+	this.oOpt.style.top = iTop + 'px';
+	this.scale = iTop/(this.oBar.offsetHeight-this.oOpt.offsetHeight);
+	this.oCon.style.top = -(this.oCon.offsetHeight-this.oConFather.offsetHeight)*this.scale+'px';//内容上移高度
+	//_Q.startMove(_this.oCon,{top:-parseInt((_this.oCon.offsetHeight-_this.oConFather.offsetHeight)*_this.scale)})
+}
+ScrollBar.prototype.optFn = function(){
+	this.scaleSizeY = this.oConFather.offsetHeight/this.oCon.offsetHeight;
+	this.iHeight = this.oConFather.offsetHeight;
+	this.oBar.style.height = this.oConFather.offsetHeight+'px';//根据内容区，来显示滚动条高度
+	this.oOpt.style.height = (this.oConFather.offsetHeight/this.oCon.offsetHeight)*this.oConFather.offsetHeight+'px';//根据内容区，来显示滑动条高度
+	if(this.oOpt.offsetHeight<=50){//判断如果滑动条小于50时，则一直以50px高显示
+		this.oOpt.style.height = '50px';
+	}else{
+		this.oOpt.style.height = this.scaleSizeY*this.iHeight+'px';
+	}
+	if(this.oCon.offsetHeight<=this.oConFather.offsetHeight){//判断 是否显示滚动条
+		this.oBar.style.display = 'none';
+	}else {
+		this.oBar.style.display = 'block';
+	}	
+}
+ScrollBar.prototype.create = function(){
+	var oDi = document.createElement('div');
+	oDi.innerHTML = '这是什么这是什么'+'<br/>';
+	this.oCon.appendChild(oDi);
+}
+var p1 = new ScrollBar('#k_parent','#k_con');
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>大图切换-渐变模式</title>
+<meta name="description" content="大图切换-渐变模式" /> 
+<meta name="keywords" content="大图切换-渐变模式" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+.k_bigimg {width:800px;height:287px;overflow:hidden;margin:0 auto;}
+.k_bigimg ul {width:800px;height:287px;position:relative;}
+.k_bigimg li {background-color:#ccc;width:800px;height:287px;position:absolute;left:top:0;filter:alpha(opaicty=0);opacity:0;}
+.k_bigimg li img {display:block;width:800px;height:287px;}
+.k_num {height:30px;text-align:center;}
+.k_num span {display:inline-block;width:10px;height:10px;background-color:red;margin-right:5px;}
+.k_num .k_current {background-color:blue;}
+</style>
+</head>
+<body>
+<div class="m960 t10" id="k_parent">
+	<div class="k_bigimg">
+		<ul id="k_bigimg">
+			<li><img src="http://imAges.csdn.net/20130625/sanxing-gdc-300-200-062501.GIF"></li>
+			<li><img src="http://drmcmm.baidu.com/media/id=nHRsP1b4rj6z&gp=401&time=nHnLnW6znHc4r0.jpg"></li>
+			<li><img src="http://images.csdn.net/20130716/QQ截图20130716095805.png"></li>
+			<li><img src="http://drmcmm.baidu.com/media/id=nHRznj0LP1mk&gp=401&time=nHnLn10knH03Ps.jpg"></li>
+		</ul>
+	</div>
+	<div class="k_num" id="k_num">
+	</div>
+</div>
+<script>
+var _Q = {
+	css : function (obj,attr,value){
+		if(!obj){return null;}
+		if(arguments.length === 2){	
+			if(obj.currentStyle){
+				return obj.currentStyle[attr];
+			}else{
+				return getComputedStyle(obj,false)[attr];
+			}
+		}else if(arguments.length === 3){
+			obj.style[attr] = value;
+		}
+	},
+	startMove : function (obj,oTarget,fn){
+		if(!obj){return null;}
+		clearInterval(obj.timer);obj.timer = null;
+		obj.timer = setInterval(function(){
+			var iCur = 0;
+			var attr = '';
+			var bStop = true;
+			for(attr in oTarget){
+				if(attr == 'opacity'){
+					//iCur = Math.round(_Q.css(obj,'opacity')*100);
+					iCur = parseInt(parseFloat(_Q.css(obj,'opacity')).toFixed(2)*100);
+				}else {
+					iCur = parseInt(_Q.css(obj,attr))
+				}
+				if(isNaN(iCur)){iCur=0;}
+				var iSpeed = (oTarget[attr]-iCur)/9;
+				iSpeed=iSpeed>0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+				iCur+=iSpeed;
+				if(oTarget[attr]!=iCur){bStop=false;}
+				if(attr == 'opacity'){
+					obj.style.filter='alpha(opacity:'+iCur+')';
+					obj.style.opacity=iCur/100;
+				}else {
+					obj.style[attr]=iCur+'px';
+				}
+			}
+			if(bStop){
+				clearInterval(obj.timer);
+				obj.timer=null;
+				if(fn){fn.call(obj);}
+			}
+		},30)
+	}
+}
+function lunboFn(ul,li,num,sClass){
+	var oImgParent = document.getElementById(ul);
+	var aImg = oImgParent.getElementsByTagName(li);
+	var oNumParent = document.getElementById(num);
+	var oParent = oImgParent.parentNode;
+	if(aImg.length==0)return false;
+	if(aImg.length>1){
+		for(var i=0,len=aImg.length;i<len;i++){
+			var oLi = document.createElement('span');
+			oNumParent.appendChild(oLi);
+		}
+		oNumParent.children[0].className = sClass;
+	}
+	aImg[0].style.filter = 'alpha(opaicty=100)';
+	aImg[0].style.opacity = '1';
+	var oZindex = 1;
+	var iNow = 0;
+	var timer = null;
+	for(var i=0;i<oNumParent.children.length;i++){
+		oNumParent.children[i].index = i;
+		oNumParent.children[i].onmouseover = function(){
+			if(this.index==iNow)return;
+			iNow = this.index;
+			tab();
+		}
+	}
+	function tab(){
+		for(var i=0;i<oNumParent.children.length;i++){
+			oNumParent.children[i].className = '';
+			aImg[i].style.filter = 'alpha(opaicty=0)';
+			aImg[i].style.opacity = '0';
+		}
+		oNumParent.children[iNow].className = sClass;
+		aImg[iNow].style.filter = 'alpha(opaicty=0)';
+		aImg[iNow].style.opacity = '0';
+		_Q.startMove(aImg[iNow],{opacity:100});
+		aImg[iNow].style.zIndex = oZindex++;
+	}
+	oParent.onmouseover = function(){
+		clearTimeout(timer);
+	}
+	setTimeFn();
+	function setTimeFn(){
+		timer = setTimeout(function(){
+			iNow++
+			if(iNow>aImg.length-1){
+				iNow = 0;
+			}
+			tab();
+			timer=setTimeout(arguments.callee,3000);
+		},3000);
+	}
+	oParent.onmouseout = function(){
+		setTimeFn();
+	}
+}
+lunboFn('k_bigimg','li','k_num','k_current');
+/**
+	参数一：ul
+	参数二：li
+	参数三：对应序列号的父级
+	参数四：对应序列号当前的class
+*/
+</script>
+</body>
+</html>

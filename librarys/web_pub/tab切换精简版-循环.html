@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/> 
+<title>tab切换精简版-循环</title>
+<meta name="description" content="tab切换精简版-循环" /> 
+<meta name="keywords" content="tab切换精简版-循环" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+a:hover {text-decoration:none;}
+.k_tiph {height:30px;overflow:hidden;}
+.k_tiph span {float:left;width:200px;height:28px;text-align:center;cursor:pointer;line-height:28px;margin-right:5px;_display:inline;border:1px solid #ccc;}
+.k_tiph .k_btn {color:#fff;background-color:#ccc;}
+.k_show div {width:650px;height:300px;background-color:#ccc;text-align:center;line-height:300px;font-size:33px;color:#fff;display:none;}
+</style>
+</head>
+<body>
+<div class="m960 t10">
+	<h4 class="k_tiph" id="k_tiph"><span>tab选项一</span><span>tab选项二</span><span>tab选项三</span></h4>
+	<div class="k_show" id="k_show">
+		<div>tab选项一</div>
+		<div>tab选项二</div>
+		<div>tab选项三</div>
+	</div>
+	<h4 class="k_tiph t10" id="k_tiph2"><span>tab选项一</span><span>tab选项二</span><span>tab选项三</span></h4>
+	<div class="k_show" id="k_show2">
+		<div>tab选项一</div>
+		<div>tab选项二</div>
+		<div>tab选项三</div>
+	</div>
+</div>
+<script>
+function tabSwidth(btnFather,btn,boxFather,box,type,sClass){
+	var doc = document;
+	var aBtn = doc.getElementById(btnFather).getElementsByTagName(btn);
+	var aBox = doc.getElementById(boxFather).getElementsByTagName(box);
+	aBtn[0].className = sClass;
+	aBox[0].style.display = 'block';
+	for(var i=0,len=aBtn.length;i<len;i++){
+		aBtn[i].index = i;
+		aBtn[i][type] = function(){
+			for(var i=0,lens=aBtn.length;i<lens;i++){
+				aBtn[i].className = '';
+				aBox[i].style.display = 'none';
+			}
+			aBtn[this.index].className = sClass;
+			aBox[this.index].style.display = 'block';
+		}
+	}
+}
+tabSwidth('k_tiph','span','k_show','div','onclick','k_btn');
+tabSwidth('k_tiph2','span','k_show2','div','onclick','k_btn');
+/*
+	与精简版不一样之处就是少一个默认显示，
+	参数一：点击按钮父级
+	参数二：点击按钮
+	参数三：对应显示盒子父级
+	参数四：对应显示盒子
+	参数五：事件类似，如点击使用onclick鼠标滑过onmouseover
+	参数六：点击按钮当前状态
+	
+*/
+</script>
+</body>
+</html>

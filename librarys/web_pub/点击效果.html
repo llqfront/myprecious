@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/> 
+<title>菜单效果</title>
+<meta name="description" content="菜单效果" />
+<meta name="keywords" content="菜单效果" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+.k_zy_menu {width:229px;padding:11px 0 0 8px;}
+.k_zy_menu h2 {padding-left:17px;cursor:default;height:30px;line-height:30px;color:#0d7d8c;font-weight:normal;background:url(../images/k_jian.png) no-repeat 0 9px;}
+.k_zy_menu h2 a {color:#0d7d8c;}
+.k_zy_menu .k_jian {background:url(../images/k_jia.png) no-repeat 0 9px;}
+.k_zy_menu h3 {margin-left:21px;cursor:default;padding-left:20px;height:24px;line-height:24px;color:#0d7d8c;font-weight:normal;background:url(../images/k_jian.png) no-repeat 0 6px;}
+.k_zy_menu h3 a {color:#0d7d8c;}
+.k_zy_menu h3 a:hover,.k_zy_menu h3 a:hover {text-decoration:none;}
+.k_zy_menu .k_jia {background:url(../images/k_jia.png) no-repeat 0 6px;}
+.k_zy_menu p {padding-left:62px;}
+.k_zy_menu p span {display:block;width:163px;font-family:Arial;height:20px;line-height:20px;color:#0d7d8c;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+.k_zy_menu p span a {color:#0d7d8c;font-family:Arial;}
+</style>
+</head>
+<body>
+<div class="k_zy_menu a_hover" id="k_zy_menu">
+	<h2>技术资源</h2>
+	<div>
+		<h3><a href="ziyuan1.html">游戏</a></h3>
+		<p>
+			<span><a href="ziyuan1.html" title="Mobile Gaming & Graphics">Mobile Gaming & Graphics</a></span>
+			<span><a href="ziyuan1.html" title="Augmented Reality (Vuforia)">Augmented Reality (Vuforia)</a></span>
+			<span><a href="ziyuan1.html" title="Peer-to-Peer (AllJoyn)">Peer-to-Peer (AllJoyn)</a></span>
+		</p>
+		<h3><a href="ziyuan2.html">多媒体</a></h3>
+		<p>
+			<span><a href="#" title="Emaging">Emaging</a></span>
+			<span><a href="#" title="Audio">Audio</a></span>
+		</p>
+		<h3><a href="ziyuan3.html">效能</a></h3>
+		<p>
+			<span><a href="#" title="Efficency">Efficency</a></span>
+		</p>
+	</div>
+</div>
+<script>
+var _Q = {
+	css : function(obj,attr,value){
+		if(!obj)return null;
+		if(arguments.length===2){	
+			if(typeof attr == 'string'){
+				if(attr == 'float'){
+					if(-[1,]){
+						attr = 'cssFloat';
+					}else {
+						attr = 'styleFloat';
+					}
+				}
+				if(obj.currentStyle){
+					return obj.currentStyle[attr];
+				}else {
+					return getComputedStyle(obj,false)[attr];
+				}
+			}else {
+				for(var key in attr){
+					obj.style[key] = attr[key];
+					if(key=='float'){
+						if(-[1,]){
+							key = 'cssFloat';
+							obj.style[key] = attr['float'];
+						}else {
+							key = 'styleFloat';
+							obj.style[key] = attr['float'];
+						}
+					}
+				}
+			}
+		}else if(arguments.length===3){
+			if(attr == 'float'){
+				if(-[1,]){
+					attr = 'cssFloat';
+				}else {
+					attr = 'styleFloat';
+				}
+			}
+			obj.style[attr] = value;
+		}
+	},
+	first : function(oParent){
+		if(!oParent)return null;
+		return oParent.firstElementChild || oParent.firstChild;
+	},
+	last : function(oParent){
+		if(!oParent)return null;
+		return oParent.lastElementChild || oParent.lastChild;
+	},
+	prev : function(obj){
+		if(!obj)return null;
+		return obj.previousElementSibling || obj.previousSibling;
+	},
+	next : function(obj){
+		if(!obj)return null;
+		return obj.nextElementSibling || obj.nextSibling;
+	},
+	addEvent : function(obj,type,fn){
+		if(!obj)return null;
+		if(obj.addEventListener){
+			obj.addEventListener(type,function(event){
+				var rtn = fn.call(obj,event);
+				if(rtn==false){
+					event.cancelBubble = true;
+					event.preventDefault();
+				}
+			},false)
+		}else {
+			obj.attachEvent('on'+type,function(){
+				var rtn = fn.call(obj,window.event);
+				if(rtn==false){
+					window.event.cancelBubble = true;
+					return false;
+				}
+			})
+		}
+	},
+	
+}
+var oMenu = document.getElementById('k_zy_menu');
+_Q.addEvent(oMenu,'click',function(event){
+	var oEvent = event || window.event;
+	var oTarget = oEvent.srcElement || oEvent.target;
+	if(oTarget.tagName.toLowerCase()=='h3'){
+		if(_Q.css(_Q.next(oTarget),'display')=='block'){
+			_Q.next(oTarget).style.display = 'none';
+			oTarget.className = 'k_jia';
+		}else {
+			_Q.next(oTarget).style.display = 'block';
+			oTarget.className = '';
+		}
+	}
+	if(oTarget.tagName.toLowerCase()=='h2'){
+		if(_Q.css(_Q.next(oTarget),'display')=='block'){
+			_Q.next(oTarget).style.display = 'none';
+			oTarget.className = 'k_jian';
+		}else {
+			_Q.next(oTarget).style.display = 'block';
+			oTarget.className = '';
+		}
+	}
+});
+</script>
+</body>
+</html>

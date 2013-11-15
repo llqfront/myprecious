@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/> 
+<title>tab切换复杂版</title>
+<meta name="description" content="tab切换复杂版" /> 
+<meta name="keywords" content="tab切换复杂版" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+a:hover {text-decoration:none;}
+.k_tiph {height:30px;overflow:hidden;}
+.k_tiph span {float:left;width:200px;height:28px;text-align:center;line-height:28px;margin-right:5px;_display:inline;border:1px solid #ccc;}
+.k_tiph .k_btn {color:#fff;background-color:#ccc;}
+.k_show .k_div {width:650px;height:300px;background-color:#ccc;text-align:center;line-height:300px;font-size:33px;color:#fff;display:none;}
+</style>
+</head>
+<body>
+<div class="m960 t10">
+	<h4 class="k_tiph" id="k_tiph"><span>tab选项一</span><span>tab选项二</span><span>tab选项三</span></h4>
+	<div class="k_show" id="k_show">
+		<div class="k_div">tab选项一</div>
+		<div class="k_div">tab选项二</div>
+		<div class="k_div">tab选项三</div>
+	</div>
+	<h4 class="k_tiph t10" id="k_tiph2"><span>tab选项一</span><span>tab选项二</span><span>tab选项三</span></h4>
+	<div class="k_show" id="k_show2">
+		<div class="k_div">tab选项一</div>
+		<div class="k_div">tab选项二</div>
+		<div class="k_div">tab选项三</div>
+	</div>
+</div>
+<script>
+function Q(arg){
+	this.aElements = [];
+	switch (typeof arg){
+		case 'string':
+			switch(arg.charAt(0)){
+				case '#':
+					if(/\s/.test(arg)){
+						var aArg = arg.split(' ');
+						this.aElements = getEle(aArg[0],aArg[1]);
+					}else{
+						this.aElements.push(document.getElementById(arg.substring(1)));
+					}
+					break;
+				default:
+					this.aElements = getEle(document,arg);
+					break
+				}
+			break;
+		case 'function':
+			addEvent(window,'load',arg);
+			break;
+	}
+	return this.aElements;
+};
+function getEle(f,s){
+	var result = [];
+	var elements = null;
+	if(s.charAt(0) == '.'){
+		if(typeof f === 'string'){
+			var par = document.getElementById(f.substring(1));
+			if(!par){
+				return result;
+			}else{
+				elements = par.getElementsByTagName('*');
+			}
+		}else if(typeof f === 'object' && f!=null){
+			elements = f.getElementsByTagName('*');
+		}else{
+			elements = [];
+		}
+		for(var i=0;i<elements.length;i++){
+			if(/\s/.test(elements[i].className)){
+				var names = elements[i].className.split(' ');
+				if(strComper(s.substring(1),names) === true){
+					result.push(elements[i]);
+				}
+			}else{
+				if(elements[i].className == s.substring(1)){
+					result.push(elements[i]);
+				}
+			}
+		}
+	}else{
+		if(typeof f === 'string'){
+			var par = document.getElementById(f.substring(1));
+			if(!par){
+				return result;
+			}
+			result = document.getElementById(f.substring(1)).getElementsByTagName(s);
+		}else if(typeof f === 'object'){
+			result = f.getElementsByTagName(s);
+		}
+	}
+	return result;
+};
+function strComper(a,b){
+	for(var i=0;i<b.length;i++){
+		if(a == b[i]){
+			return true;
+			break;
+		}
+	}
+};
+function tabSwidth(btn,box,type,sClass,iN){
+	var aBtn = Q(btn);
+	var aBox = Q(box);
+	aBox[iN].style.display = 'block';
+	aBtn[iN].className = sClass;
+	var btnNone = aBtn[iN];
+	var boxNone = aBox[iN];
+	for(var i=0;i<aBtn.length;i++){
+		aBtn[i].index = i;
+		aBtn[i][type] = function(){
+			if(btnNone){
+				btnNone.className = '';
+				boxNone.style.display = 'none';
+			}
+			aBtn[this.index].className = sClass;
+			aBox[this.index].style.display = 'block';
+			btnNone = aBtn[this.index];
+			boxNone = aBox[this.index];
+		}
+	}
+}
+tabSwidth('#k_tiph span','#k_show div','onmouseover','k_btn',0);
+tabSwidth('#k_tiph2 span','#k_show2 .k_div','onclick','k_btn',0);
+/**
+	复杂版与精简版的区别是增加了获取方式
+	（前三个方法为 获取方法需要加入）
+	参数一：点击按钮（父级+当前标签）
+	参数二：对应盒子（父级+当前标签）当前标签也可以使用classname
+	参数三：事件类型 点击 滑过
+	参数四：点击按钮当前状态
+	参数五：默认显示哪一个
+	<script>
+//
+if(window.location.href.indexOf('?myprecious')>-1){
+	tabSwidth('#k_tab1 li','#k_tab_box .schedule','onclick','hover',1);
+}else {
+	tabSwidth('#k_tab1 li','#k_tab_box .schedule','onclick','hover',0);	
+}
+只需给其他每个页面 的链接 增加guide.html(?myprecious)便可以
+*/
+</script>
+</body>
+</html>

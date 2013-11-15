@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/> 
+<title>javascript模拟select</title>
+<meta name="description" content="javascript模拟select" /> 
+<meta name="keywords" content="javascript模拟select" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+a:hover {text-decoration:none;}
+.k_city {width:300px;float:left;height:30px;margin-right:20px;_display:inline;position:relative;margin-top:20px;}
+.k_citytip {display:block;width:300px;height:30px;text-align:center;line-height:30px;font-weight:normal;font-size:16px;background-color:#ccc;color:#fff;}
+.k_citylist {width:300px;position:absolute;left:0;top:30px;z-index:5;display:none;}
+.k_citylist li {width:300px;height:30px;text-align:center;line-height:30px;font-size:14px;}
+.k_citylist li a {display:block;width:300px;height:30px;}
+.k_citylist li a:hover {background-color:#ccc;}
+</style>
+</head>
+<body>
+<div class="m960 clears">
+	<div class="k_city">
+		<a href="javascript:;" class="k_citytip" id="k_citytip">省份</a>
+		<ul class="k_citylist" id="k_citylist">
+			<li><a href="#">北京</a></li>
+			<li><a href="#">辽宁</a></li>
+			<li><a href="#">上海</a></li>
+			<li><a href="#">广东</a></li>
+			<li><a href="#">大连</a></li>
+			<li><a href="#">吉林</a></li>
+		</ul>
+	</div>
+	<div class="k_city">
+		<a href="javascript:;" class="k_citytip" id="k_citytip2">省份</a>
+		<ul class="k_citylist" id="k_citylist2">
+			<li><a href="#">北京</a></li>
+			<li><a href="#">辽宁</a></li>
+			<li><a href="#">上海</a></li>
+			<li><a href="#">广东</a></li>
+			<li><a href="#">大连</a></li>
+			<li><a href="#">吉林</a></li>
+		</ul>
+	</div>
+	<div class="k_city">
+		<a href="javascript:;" class="k_citytip" id="k_citytip3">省份</a>
+		<ul class="k_citylist" id="k_citylist3">
+			<li><a href="#">北京</a></li>
+			<li><a href="#">辽宁</a></li>
+			<li><a href="#">上海</a></li>
+			<li><a href="#">广东</a></li>
+			<li><a href="#">大连</a></li>
+			<li><a href="#">吉林</a></li>
+		</ul>
+	</div>
+</div>
+<script>
+function addEvent(obj,type,fn){
+	if(!obj)return null;
+	if(obj.addEventListener){
+		obj.addEventListener(type,function(event){
+			var rtn = fn.call(obj,event);
+			if(rtn == false){
+				event.cancelBubble = true;
+				event.preventDefault();
+			}
+		},false)
+	}else {
+		obj.attachEvent('on'+type,function(){
+			var rtn = fn.call(obj,window.event);
+			if(rtn == false){
+				window.event.cancelBubble = true;
+				return false;
+			}
+		})
+	}
+}
+function selectSwitch(tip,list){
+	var doc = document;
+	var oSelectTip = doc.getElementById(tip);
+	var oSelectList = doc.getElementById(list);
+	var bTrue = true;
+	addEvent(oSelectTip,'click',function(event){
+		var oEvent = event || window.event;
+		if(bTrue){
+			oSelectList.style.display = 'block';
+			bTrue = false;
+		}else {
+			oSelectList.style.display = 'none';
+			bTrue = true;
+		}
+		oEvent.cancelBubble = true;
+	});
+	addEvent(document,'click',function(){
+		oSelectList.style.display = 'none';
+		bTrue = true;
+	});
+	addEvent(oSelectList,'click',function(event){
+		var oEvent = event || window.event;
+		var oTarget = oEvent.srcElement || oEvent.target;
+		oSelectTip.innerHTML = oTarget.innerHTML;
+	})
+}
+selectSwitch('k_citytip','k_citylist');
+selectSwitch('k_citytip2','k_citylist2');
+selectSwitch('k_citytip3','k_citylist3');
+/**
+	selectSwitch  两个id
+	参数一：当前显示
+	参数二：也就是ul的  id
+	实现方法，点击ul 获取当前li的innerHTML  直接 复给第一个id
+	css正常布局，ul需要定位显示
+*/
+</script>
+</body>
+</html>
