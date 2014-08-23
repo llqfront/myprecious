@@ -106,6 +106,10 @@ function strComper(a,b){
 function tabSwidth(btn,box,type,sClass,iN){
 	var aBtn = Q(btn);
 	var aBox = Q(box);
+	for(var i=0;i<aBtn.length;i++){
+		aBox[i].style.display = '';
+		aBtn[i].className = '';
+	}
 	aBox[iN].style.display = 'block';
 	aBtn[iN].className = sClass;
 	var btnNone = aBtn[iN];

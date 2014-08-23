@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>大图切换-横向版</title>
+<meta name="description" content="大图切换-横向版" /> 
+<meta name="keywords" content="大图切换-横向版" />
+<link rel="stylesheet" href="../css/index.css"/>
+<style>
+a:hover{text-decoration:underline;}
+/** 图片部分 */
+.k_bigimg {width:700px;height:287px;overflow:hidden;margin:0 auto;position:relative;}
+.k_bigimg ul {width:700px;height:287px;height:287px;position:relative;overflow:hidden;}
+.k_bigimg li {background-color:#ccc;width:700px;height:287px;position:absolute;left:top:0;display:none;}
+.k_bigimg li img {display:block;width:700px;height:287px;}
+/** 循环小点 */
+.k_num {height:30px;text-align:center;}
+.k_num span {display:inline-block;width:20px;height:20px;text-align:center;line-height:20px;background-color:red;margin-right:5px;}
+.k_num .k_current {background-color:blue;color:#fff;}
+.k_num .k_current2 {background-color:#000;color:#fff;}
+/** 左右方向 */
+.k_btn {height:30px;line-height:30px;text-align:center;}
+.k_btn a {display:inline-block;margin:0 50px;display:none;background-color:red;padding:0 10px;color:#fff;font-size:16px;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="m960 t10">
+	<div class="k_bigimg">
+		<ul id="k_bigimg">
+			<li><img src="http://imAges.csdn.net/20130625/sanxing-gdc-300-200-062501.GIF"></li>
+			<li><img src="http://drmcmm.baidu.com/media/id=nHRsP1b4rj6z&gp=401&time=nHnLnW6znHc4r0.jpg"></li>
+			<li><img src="http://images.csdn.net/20130716/QQ截图20130716095805.png"></li>
+			<li><img src="http://drmcmm.baidu.com/media/id=nHRznj0LP1mk&gp=401&time=nHnLn10knH03Ps.jpg"></li>
+		</ul>
+	</div>
+	<div class="k_num" id="k_num">
+	</div>
+	<div class="k_btn" id="k_btn">
+		<a href="javascript:;" class="k_prev">prev</a>
+		<a href="javascript:;" class="k_next">next</a>
+	</div>
+</div>
+<div class="m960 t10">
+	<div class="k_bigimg">
+		<ul id="k_bigimg2">
+			<li><img src="http://imAges.csdn.net/20130625/sanxing-gdc-300-200-062501.GIF"></li>
+			<li><img src="http://drmcmm.baidu.com/media/id=nHRsP1b4rj6z&gp=401&time=nHnLnW6znHc4r0.jpg"></li>
+			<li><img src="http://images.csdn.net/20130716/QQ截图20130716095805.png"></li>
+			<li><img src="http://drmcmm.baidu.com/media/id=nHRznj0LP1mk&gp=401&time=nHnLn10knH03Ps.jpg"></li>
+		</ul>
+	</div>
+	<div class="k_num k_num2" id="k_num2">
+	</div>
+	<div class="k_btn" id="k_btn2">
+		<a href="javascript:;" class="k_prev">prev</a>
+		<a href="javascript:;" class="k_next">next</a>
+	</div>
+</div>
+<script>
+var _Q = {
+	css : function (obj,attr,value){
+		if(!obj){return null;}
+		if(arguments.length === 2){	
+			if(obj.currentStyle){
+				return obj.currentStyle[attr];
+			}else{
+				return getComputedStyle(obj,false)[attr];
+			}
+		}else if(arguments.length === 3){
+			obj.style[attr] = value;
+		}
+	},
+	startMove : function (obj,oTarget,fn){
+		if(!obj){return null;}
+		clearInterval(obj.timer);obj.timer = null;
+		obj.timer = setInterval(function(){
+			var iCur = 0;
+			var attr = '';
+			var bStop = true;
+			for(attr in oTarget){
+				if(attr == 'opacity'){
+					//iCur = Math.round(_Q.css(obj,'opacity')*100);
+					iCur = parseInt(parseFloat(_Q.css(obj,'opacity')).toFixed(2)*100);
+				}else {
+					iCur = parseInt(_Q.css(obj,attr))
+				}
+				if(isNaN(iCur)){iCur=0;}
+				var iSpeed = (oTarget[attr]-iCur)/9;
+				iSpeed=iSpeed>0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+				iCur+=iSpeed;
+				if(oTarget[attr]!=iCur){bStop=false;}
+				if(attr == 'opacity'){
+					obj.style.filter='alpha(opacity:'+iCur+')';
+					obj.style.opacity=iCur/100;
+				}else {
+					obj.style[attr]=iCur+'px';
+				}
+			}
+			if(bStop){
+				clearInterval(obj.timer);
+				obj.timer=null;
+				if(fn){fn.call(obj);}
+			}
+		},30)
+	}
+}
+var Kmet = {};
+Kmet.sildePicture = function(oImgParent,oNumParent,oPrevNextBtn,pos){
+	this.oImgParent = oImgParent;
+	this.aImg = this.oImgParent.children;
+	this.oNumParent = oNumParent;
+	this.iLeft = this.oImgParent.parentNode.offsetWidth;
+	this.createSize = (typeof pos.createSize == 'undefined')?'':pos.createSize;
+	this.oPrevNext = (typeof pos.oPrevNext == 'undefined')?'':pos.oPrevNext;
+	this.sClassName = (typeof pos.sClassName == 'undefined')?'':pos.sClassName;
+	if(this.oPrevNext){
+		this.oPrevNextBtn = oPrevNextBtn.children;
+	}
+	this.oZindex = 1;
+	this.iNow = 0;
+	this.timer = null;
+	this.oLi = null;
+	if(this.oImgParent.children.length==0){
+		return false;
+	}
+	if(this.oImgParent.children.length==1){
+		this.onlyOne();
+		return false;
+	}
+	this.everyOne();
+	//this.tabSwitch(0,2);
+	this.onTag();
+	this.onParent();
+	this.setTimeFn();
+}
+Kmet.sildePicture.prototype = {
+	onlyOne : function(){
+		if(this.aImg.length==0||this.aImg.length==1){
+			this.aImg[0].style.display = 'block';
+			return false;
+		}
+	},
+	everyOne : function(){
+		var _that = this;
+		//this.aImg[this.aImg.length-1].style.display = 'block';
+		this.aImg[0].style.display = 'block';
+		//this.aImg[this.aImg.length-1].style.left = this.iLeft+'px';
+		this.aImg[0].style.left = this.iLeft+'px';
+		this.oImgParent.style.width = this.iLeft*3+'px';
+		this.oImgParent.style.left = -this.iLeft+'px';
+		if(this.aImg.length>1){
+			for(var i=0,len=this.aImg.length;i<len;i++){
+				this.oLi = document.createElement('span');
+				if(this.createSize){
+					this.oLi.innerHTML = i+1;
+				}
+				this.oNumParent.appendChild(this.oLi);
+			}
+			this.oNumParent.children[0].className = this.sClassName;
+			if(this.oPrevNext){
+				this.oPrevNextBtn[0].style.display = this.oPrevNextBtn[1].style.display = 'inline-block';
+				this.oPrevNextBtn[0].onclick = function(){
+					_that.iNow--;
+					if(_that.iNow<0){
+						_that.iNow = _that.aImg.length-1;
+					}
+					_that.tabSwitch(2,0);
+				}
+				this.oPrevNextBtn[1].onclick = function(){
+					_that.iNow++
+					if(_that.iNow>_that.aImg.length-1){
+						_that.iNow = 0;
+					}
+					_that.tabSwitch(0,2);
+				}
+			}
+		}
+	},
+	onTag : function(){
+		var _that = this;
+		for(var i=0,len2=this.oNumParent.children.length;i<len2;i++){
+			this.oNumParent.children[i].index = i;
+			this.oNumParent.children[i].onmouseover = function(){
+				var _this = this;
+				if(_this.index==_that.iNow)return;
+				_that.iNow = _this.index;
+				_that.tabSwitch(0,2);
+			}
+		}
+	},
+	tabSwitch : function (n1,n2){
+		var _that = this;
+		for(var i=0,len3=this.oNumParent.children.length;i<len3;i++){
+			this.oNumParent.children[i].className = '';
+			this.aImg[i].style.left = this.iLeft+'px';
+			_Q.startMove(this.aImg[i],{left:this.iLeft*n1},function(){//0
+				//for(var i=0;i<_that.oNumParent.children.length;i++){
+				for(var i=0,len4=_that.oNumParent.children.length;i<len4;i++){
+					_that.aImg[i].style.display = 'none';
+				}
+				_that.aImg[_that.iNow].style.display = 'block';
+			});
+			this.aImg[i].style.zIndex = '0';
+		}
+		this.oNumParent.children[this.iNow].className = this.sClassName;
+		this.aImg[this.iNow].style.left = this.iLeft*n2+'px';//2
+		this.aImg[this.iNow].style.display = 'block';
+		_Q.startMove(this.aImg[this.iNow],{left:this.iLeft},function(){
+			_that.aImg[_that.iNow].style.zIndex = '5';
+		});
+	},
+	setTimeFn : function (){
+		var _that = this;
+		this.timer = setTimeout(function(){
+			_that.iNow++
+			if(_that.iNow>_that.aImg.length-1){
+				_that.iNow = 0;
+			}
+			_that.tabSwitch(0,2)
+			_that.timer=setTimeout(arguments.callee,4000);
+		},4000);
+	},
+	onParent : function(){
+		var _that = this;
+		this.oImgParent.parentNode.parentNode.onmouseover = function(){
+			clearTimeout(_that.timer);
+		}
+		this.oImgParent.parentNode.parentNode.onmouseout = function(){
+			_that.setTimeFn();
+		}
+	}
+}
+function sildeFn1(){
+	var oImgParent = document.getElementById('k_bigimg');
+	var oNumParent = document.getElementById('k_num');
+	var oPrevNextBtn = document.getElementById('k_btn');
+	var t1 = null;
+	t1 = new Kmet.sildePicture(oImgParent,oNumParent,oPrevNextBtn,{createSize:true,oPrevNext:true,sClassName:'k_current'});
+}
+sildeFn1();
+function sildeFn2(){
+	var oImgParent2 = document.getElementById('k_bigimg2');
+	var oNumParent2 = document.getElementById('k_num2');
+	var oPrevNextBtn2 = document.getElementById('k_btn2');
+	var t2 = null;
+	t2 = new Kmet.sildePicture(oImgParent2,oNumParent2,null,{createSize:false,oPrevNext:false,sClassName:'k_current2'});
+}
+sildeFn2();
+/**
+	* oImgParent == ul 
+	* oNumParent = 对应 序列号 父级
+	* oPrevNextBtn == 左右点击按钮父级  如果没有则为null 对应oPrevNext 则为false，  如果存在  对应oPrevNext 则为true 
+	* oPrevNext:true/false 是否存在 左右
+	* createSize:true/false===如果ture 则显示数字  如果为false 则无数字
+	* sClassName ==序列号 当前状态的className
+*/
+</script>
+</body>
+</html>
