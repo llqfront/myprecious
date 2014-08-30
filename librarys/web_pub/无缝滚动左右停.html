@@ -98,7 +98,7 @@ function sildeStopFn(prev,next,ul){
 			return false;
 		}else {
 			iNow++;
-			_Q.startMove(oUl,{left:iNow*iWidth});
+			oUl.style.left=iNow*iWidth;
 		}
 	}
 	oNext.onclick = function(){
